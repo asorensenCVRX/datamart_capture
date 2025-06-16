@@ -29,6 +29,8 @@ def run_upload():
     rollup_df = rollup_df.iloc[:, cols]
     # add a column at beginning with the snapshot date
     rollup_df.insert(0, "SNAPSHOT_DATE", get_etl_date(radio_state.get()))
+    # add a second column with the month
+    rollup_df.insert(1, "FORECAST_MONTH", "2025_" + month)
 
     # insert into tblRollup_Snapshot
     with engine.begin() as conn:
