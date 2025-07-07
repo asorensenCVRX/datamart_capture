@@ -12,12 +12,16 @@ if len(str(month)) == 1:
     month = "0" + str(month)
 else:
     month = str(month)
+# month_name = "June"
+# month = "06"
 
 # pull the correct columns by month
-month_columns = {"June": [30, 31, 32, 33, 34, 35, 36, 37],
-                 "July": [],
-                 "August": [],
-                 "September": [],
+# range function includes the first number but not the last number
+# 0 is the first column!!
+month_columns = {"June": list(range(30, 38)),
+                 "July": list(range(44, 52)),
+                 "August": list(range(52, 60)),
+                 "September": list(range(60, 68)),
                  "October": [],
                  "November": [],
                  "December": []}
