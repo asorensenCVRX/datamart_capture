@@ -1,4 +1,4 @@
-from dbconnector.database import engine
+from database import engine
 import pandas as pd
 from datetime import date
 from pyodbc import IntegrityError
