@@ -31,18 +31,15 @@ else:
 # pull the correct columns by month
 # range function includes the first number but not the last number
 # 0 is the first column!!
-month_columns = {"June": list(range(30, 38)),
-                 "July": list(range(44, 52)),
-                 "August": list(range(52, 60)),
-                 "September": list(range(60, 68)),
-                 "October": list(range(74, 82)),
-                 "November": list(range(82, 90)),
-                 "December": list(range(90,98))}
+month_columns = {"January": list(range(3, 7)),
+                 "February": list(range(7, 11)),
+                 "March": list(range(11, 15)),
+              }
 
 # get the columns containing last month's data
-prev_cols = [5] + (month_columns[last_month_name])
+prev_cols = [1] + (month_columns[last_month_name])
 # get the columns containing this month's data
-cols = [5] + (month_columns[month_name])
+cols = [1] + (month_columns[month_name])
 
 
 def insert_into_table(pddf: pd.DataFrame, connection):
@@ -86,28 +83,28 @@ def update_variance_explanations(pddf: pd.DataFrame, connection):
 
 def get_etl_date(sel):
     if sel == "first":
-        return f"2025-{mm}-01"
+        return f"2026-{mm}-01"
     elif sel == "mid":
-        return f"2025-{mm}-15"
+        return f"2026-{mm}-15"
     else:
-        return f"2025-{mm}-{calendar.monthrange(2025, int(mm))[1] - 6}"
+        return f"2026-{mm}-{calendar.monthrange(2026, int(mm))[1] - 6}"
 
 
 def run_upload():
-    df = pd.read_excel(io=rollup_file, sheet_name='Forecast ROLLUP', header=3, skiprows=[4])
+    df = pd.read_excel(io=rollup_file, sheet_name='Forecast ROLLUP', header=4, skiprows=[5])
     df = df[df['SFDC ID'].notna()].reset_index(drop=True)
     # get columns for the current month
     rollup_df = df.iloc[:, cols]
     # add a column at beginning with the snapshot date
     rollup_df.insert(0, "SNAPSHOT_DATE", get_etl_date(radio_state.get()))
     # add a second column with the month
-    rollup_df.insert(1, "FORECAST_MONTH", "2025_" + mm)
+    rollup_df.insert(1, "FORECAST_MONTH", "2026_" + mm)
 
     # create new df, get columns from previous month
     variance_df = df.iloc[:, prev_cols]
     # keep only sfdc_id and variance columns
-    variance_df = variance_df.iloc[:, [0, 4, 8]]
-    variance_df.insert(0, "FORECAST_MONTH", "2025_" + prev_mm)
+    variance_df = variance_df.iloc[:, [0, 2, 4]]
+    variance_df.insert(0, "FORECAST_MONTH", "2026_" + prev_mm)
     variance_df.columns = ["FORECAST_MONTH", "SFDC ID", "IMPL_REASON_FOR_VARIANCE", "REV_REASON_FOR_VARIANCE"]
 
     variance_df.to_excel("variance_df.xlsx", index=False)
